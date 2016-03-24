@@ -29,33 +29,36 @@ exports.initialize = function(pathsObj) {
 fs = Promise.promisifyAll(fs);
 
 exports.readListOfUrls = function() {
-  // return fs.readFileAsync(exports.paths.list, 'utf8', function(err, content) {
-  //   if (err) {
-  //     return err;
-  //   } else {
-  //     return content;
-  //   }
-  // });
-
-  return new Promise(function(resolve, reject) {
-    fs.readFile(exports.path.list, 'utf8', function(err, content) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(content);
-      }
+  return fs.readFileAsync(exports.paths.list, 'utf8')
+    .then(function(content) {
+      console.log('content: ', content.split('\n'));
+      return content.split('\n');
+    })
+    .catch(function(err) {
+      console.log(err);
     });
+};
+
+exports.isUrlInList = function(url) {
+  //returns boolean
+  console.log('Is ' + url + ' in the url list');
+  return _.contains(exports.readListOfUrls(), url);
+};
+
+exports.addUrlToList = function(url) {
+  console.log('added ' + url + ' to list');
+  return fs.writeFileAsync(exports.paths.list, url).catch(function(err) {
+    console.log('Oops, the URL was not added.');
   });
 };
 
-exports.isUrlInList = function() {
-
-};
-
-exports.addUrlToList = function() {
-};
-
-exports.isUrlArchived = function() {
+exports.isUrlArchived = function(url) {
+  console.log('Is ' + exports.paths.archivedSites + ' archived.');
+  if (path.basename(JSON.stringify(exports.paths.archivedSites + url))) {
+    return true && exports.paths.archivedSites + url;    
+  } else {
+    return false;
+  }
 };
 
 exports.downloadUrls = function() {

@@ -8,25 +8,54 @@ var indexUrl = '/Users/student/Codes/2016-02-web-historian/web/public/index.html
 // require more modules/folders here!
 
 exports.handleRequest = function (req, res) {
+  //default statusCode
   var statusCode = 200;
 
-  // Return content of index.html
+  var findSite;
+  var archivedUrl = archive.isUrlArchived(req.url);
+
+  //does URL exist in archive
   if (req.url === '/') {
-    fs.readFile(indexUrl, 'utf8', function(err, content) {
+    findSite = indexUrl;
+  } else if (archivedUrl) {
+    findSite = archivedUrl;
+  }
+
+  // console.log('findSite: ', findSite);
+
+  //read list of URLs
+  // archive.readListOfUrls();
+  // console.log('Should be array of URLs: ', archive.readListOfUrls());
+
+
+  if (req.method === 'GET') {
+    // Return content of index.html
+    fs.readFile(findSite, 'utf8', function(err, content) {
       if (err) {
-        console.log(err);
+        console.log('Error! The content was not found!');
+        statusCode = 404;
+        res.writeHead(statusCode, httpHelpers.headers);
+        res.end();
       } else {
-        // console.log(content, typeof content);
-        console.log(archive.readListOfUrls());
+        console.log('Success! The content was retrieved sucessfully!');
         res.writeHead(statusCode, httpHelpers.headers);
         res.end(content);
       }
     });
-  } else if (req.method === 'POST') {
-
-  } else if (req.method === 'GET') {
-    // '/google.com'
   }
-  // res.end(archive.paths.list);
-
+  
+  //check request method
+  if (req.method === 'POST') {
+    //if not in archive
+    req.on('data', function(chunk) {
+      console.log('chunk: ', JSON.parse(chunk));
+      chunk = JSON.parse(chunk);
+      if (!archive.isUrlInList(chunk.url)) {
+        //append to sites.txt
+        statusCode = 302;
+        res.writeHead(statusCode, httpHelpers.headers);
+        archive.addUrlToList(chunk.url);
+      }
+    });
+  }
 };
