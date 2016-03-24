@@ -1,3 +1,4 @@
+var Promise = require('bluebird');
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
@@ -25,10 +26,30 @@ exports.initialize = function(pathsObj) {
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
+fs = Promise.promisifyAll(fs);
+
 exports.readListOfUrls = function() {
+  // return fs.readFileAsync(exports.paths.list, 'utf8', function(err, content) {
+  //   if (err) {
+  //     return err;
+  //   } else {
+  //     return content;
+  //   }
+  // });
+
+  return new Promise(function(resolve, reject) {
+    fs.readFile(exports.path.list, 'utf8', function(err, content) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(content);
+      }
+    });
+  });
 };
 
 exports.isUrlInList = function() {
+
 };
 
 exports.addUrlToList = function() {
