@@ -17,7 +17,7 @@ var request = supertest.agent(server);
 
 describe('server', function() {
   describe('GET /', function () {
-    xit('should return the content of index.html', function (done) {
+    it('should return the content of index.html', function (done) {
       // just assume that if it contains an <input> tag its index.html
       request
         .get('/')
@@ -27,7 +27,7 @@ describe('server', function() {
 
   describe('archived websites', function () {
     describe('GET', function () {
-      xit('should return the content of a website from the archive', function (done) {
+      it('should return the content of a website from the archive', function (done) {
         var fixtureName = 'www.google.com';
         var fixturePath = archive.paths.archivedSites + '/' + fixtureName;
 
@@ -47,7 +47,7 @@ describe('server', function() {
           });
       });
 
-      xit('Should 404 when asked for a nonexistent file', function(done) {
+      it('Should 404 when asked for a nonexistent file', function(done) {
         request.get('/arglebargle').expect(404, done);
       });
     });
@@ -82,10 +82,13 @@ describe('archive helpers', function() {
       var urlArray = ['example1.com', 'example2.com'];
       fs.writeFileSync(archive.paths.list, urlArray.join('\n'));
 
-      archive.readListOfUrls(function(urls) {
+      archive.readListOfUrls().then(function(urls) {
         expect(urls).to.deep.equal(urlArray);
         done();
       });
+
+      // expect(archive.readListOfUrls()).to.deep.equal(urlArray);
+
     });
   });
 

@@ -32,7 +32,8 @@ exports.readListOfUrls = function() {
   return fs.readFileAsync(exports.paths.list, 'utf8')
     .then(function(content) {
       console.log('content: ', content.split('\n'));
-      return content.split('\n');
+      var urlArray = content.split('\n');
+      return urlArray;
     })
     .catch(function(err) {
       console.log(err);
@@ -47,13 +48,13 @@ exports.isUrlInList = function(url) {
 
 exports.addUrlToList = function(url) {
   console.log('added ' + url + ' to list');
-  return fs.writeFileAsync(exports.paths.list, url).catch(function(err) {
+  return fs.writeFileAsync(exports.paths.list, (url + '\n')).catch(function(err) {
     console.log('Oops, the URL was not added.');
   });
 };
 
 exports.isUrlArchived = function(url) {
-  console.log('Is ' + exports.paths.archivedSites + ' archived.');
+  // console.log('Is ' + exports.paths.archivedSites + ' archived.');
   if (path.basename(JSON.stringify(exports.paths.archivedSites + url))) {
     return true && exports.paths.archivedSites + url;    
   } else {
