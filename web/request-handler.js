@@ -15,6 +15,7 @@ exports.handleRequest = function (req, res) {
   var statusCode = 200;
 
   var findSite;
+  var urlInList;
   var archivedUrl = archive.isUrlArchived(req.url);
 
   //does URL exist in archive
@@ -57,9 +58,15 @@ exports.handleRequest = function (req, res) {
     console.log('THIS IS POST - DO YOU POST ME?');
     //if not in archive
     req.on('data', function(chunk) {
-      console.log('chunk: ', JSON.parse(chunk));
       chunk = JSON.parse(chunk);
-      if (!archive.isUrlInList(chunk.url)) {
+      
+      console.log('The url is : ', chunk.url);
+      archive.isUrlInList(chunk.url, function(is) {
+        urlInList = is;
+        console.log('isUrlInList: ', urlInList);
+      });
+
+      if (!urlInList) {
         //append to sites.txt
         statusCode = 302;
         res.writeHead(statusCode, httpHelpers.headers);

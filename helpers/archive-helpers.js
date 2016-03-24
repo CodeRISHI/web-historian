@@ -32,18 +32,25 @@ exports.readListOfUrls = function() {
   return fs.readFileAsync(exports.paths.list, 'utf8')
     .then(function(content) {
       console.log('content: ', content.split('\n'));
-      var urlArray = content.split('\n');
-      return urlArray;
+      return content.split('\n');
     })
     .catch(function(err) {
       console.log(err);
     });
 };
 
-exports.isUrlInList = function(url) {
-  //returns boolean
+exports.isUrlInList = function(url, callback) {
   console.log('Is ' + url + ' in the url list');
-  return _.contains(exports.readListOfUrls(), url);
+
+  return exports.readListOfUrls().then(function(urls) {
+    // console.log('urls: ', urls);    
+    // return _.contains(urls, url);
+    if (_.contains(urls, url)) {
+      callback(true);
+    } else {
+      callback(false);
+    }
+  });
 };
 
 exports.addUrlToList = function(url) {
