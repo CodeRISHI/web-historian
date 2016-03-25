@@ -15,15 +15,16 @@ exports.handleRequest = function (req, res) {
   var statusCode = 200;
 
   var findSite, urlInList;
-  var archivedUrl = archive.isUrlArchived(req.url);
-  console.log('ARCHIVED URL: ', archivedUrl);
+  var archivedSiteUrl = archive.isUrlArchived(req.url);
 
   //does URL exist in archive
   if (req.url === '/') {
     findSite = indexUrl;
-  } else if (archivedUrl) {
-    findSite = archivedUrl;
+  } else if (archivedSiteUrl) {
+    findSite = archivedSiteUrl;
   }
+
+  console.log('archivedSiteUrl', archivedSiteUrl);
 
   if (req.method === 'GET') {
     console.log('THIS IS GET - DO YOU GET ME?');

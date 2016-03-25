@@ -2,6 +2,7 @@ var Promise = require('bluebird');
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+var request = require('request');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -66,14 +67,32 @@ exports.addUrlToList = function(url, callback) {
 
 exports.isUrlArchived = function(url, callback) {
   // console.log('Is ' + exports.paths.archivedSites + ' archived.');
+  // var archivedUrl = exports.paths.archivedSites + url;
+  // return fs.exists(archivedUrl, function(exists) {
+  //   callback(exists);
+  // })
+  // .then(function(param) {
+  //   return archivedUrl;
+  // });
+  callback = callback || _.identity;
   if (path.basename(exports.paths.archivedSites + url)) {
-    // callback(true);
-    return true && exports.paths.archivedSites + url;    
+    callback(true);
+    console.log(exports.paths.archivedSites + url);
+    return true && exports.paths.archivedSites + url;
   } else {
-    // callback(false);
+    callback(false);
     return false;
   }
 };
 
-exports.downloadUrls = function() {
+exports.downloadUrls = function(array) {
+  var urlsArray = array || [];
+
+  _.each(urlsArray, function(url) {
+    if (!url) {
+      return;
+    } else {
+      request('http://' + url).pipe(fs.createWriteStream(exports.paths.archivedSites + '/' + url));
+    }
+  });
 };
