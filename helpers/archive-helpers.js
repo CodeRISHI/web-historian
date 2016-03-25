@@ -53,18 +53,24 @@ exports.isUrlInList = function(url, callback) {
   });
 };
 
-exports.addUrlToList = function(url) {
+exports.addUrlToList = function(url, callback) {
   console.log('added ' + url + ' to list');
-  return fs.writeFileAsync(exports.paths.list, (url + '\n')).catch(function(err) {
-    console.log('Oops, the URL was not added.');
-  });
+  return fs.writeFileAsync(exports.paths.list, (url + '\n'))
+    .then(function() {
+      return callback();
+    })
+    .catch(function(err) {
+      console.log('Oops, the URL was not added.');
+    });
 };
 
-exports.isUrlArchived = function(url) {
+exports.isUrlArchived = function(url, callback) {
   // console.log('Is ' + exports.paths.archivedSites + ' archived.');
-  if (path.basename(JSON.stringify(exports.paths.archivedSites + url))) {
+  if (path.basename(exports.paths.archivedSites + url)) {
+    // callback(true);
     return true && exports.paths.archivedSites + url;    
   } else {
+    // callback(false);
     return false;
   }
 };

@@ -14,9 +14,9 @@ exports.handleRequest = function (req, res) {
   //default statusCode
   var statusCode = 200;
 
-  var findSite;
-  var urlInList;
+  var findSite, urlInList;
   var archivedUrl = archive.isUrlArchived(req.url);
+  console.log('ARCHIVED URL: ', archivedUrl);
 
   //does URL exist in archive
   if (req.url === '/') {
@@ -38,19 +38,6 @@ exports.handleRequest = function (req, res) {
         res.writeHead(statusCode, httpHelpers.headers);
         res.end();
       });
-
-    // fs.readFile(findSite, 'utf8', function(err, content) {
-    //   if (err) {
-    //     console.log('Error! The content was not found!');
-    //     statusCode = 404;
-    //     res.writeHead(statusCode, httpHelpers.headers);
-    //     res.end();
-    //   } else {
-    //     console.log('Success! The content was retrieved sucessfully!');
-    //     res.writeHead(statusCode, httpHelpers.headers);
-    //     res.end(content);
-    //   }
-    // });
   }
   
   //check request method
@@ -63,7 +50,6 @@ exports.handleRequest = function (req, res) {
       console.log('The url is : ', chunk.url);
       archive.isUrlInList(chunk.url, function(is) {
         urlInList = is;
-        console.log('isUrlInList: ', urlInList);
       });
 
       if (!urlInList) {
